@@ -1,0 +1,58 @@
+import { Testimonial } from "@/types";
+
+export const testimonials: Testimonial[] = [
+  {
+    id: "1",
+    name: "Pooja Sharma",
+    role: "MBA Student",
+    college: "Symbiosis Institute of Business Management",
+    content: "SkillZuva's Digital Marketing course gave me practical knowledge I couldn't find in textbooks. I landed a marketing internship within a month of completing the course!",
+    rating: 5,
+    avatar: "PS",
+  },
+  {
+    id: "2",
+    name: "Rahul Verma",
+    role: "BBA Final Year",
+    college: "Amity University, Noida",
+    content: "The communication skills course transformed how I present myself. My confidence in interviews has improved dramatically. Highly recommend it to every student.",
+    rating: 5,
+    avatar: "RV",
+  },
+  {
+    id: "3",
+    name: "Aisha Khan",
+    role: "B.Com Graduate",
+    college: "Lady Shri Ram College, Delhi",
+    content: "Banking & Finance course on SkillZuva helped me clear my banking exam concepts. The instructor explains complex topics in a very clear and structured manner.",
+    rating: 4,
+    avatar: "AK",
+  },
+  {
+    id: "4",
+    name: "Tanmay Joshi",
+    role: "Marketing Professional",
+    college: "Working at Wipro",
+    content: "I took the Sales & Marketing Mastery course to upskill for my current role. The real-world case studies and frameworks are extremely practical and immediately applicable.",
+    rating: 5,
+    avatar: "TJ",
+  },
+  {
+    id: "5",
+    name: "Meera Iyer",
+    role: "HR Executive",
+    college: "Working at Infosys BPO",
+    content: "The HRM course is comprehensive and up-to-date with current industry practices. It helped me understand talent management processes better in my daily work.",
+    rating: 4,
+    avatar: "MI",
+  },
+  {
+    id: "6",
+    name: "Suraj Pillai",
+    role: "MBA Student",
+    college: "IIM Kozhikode",
+    content: "Business Analytics Essentials is a must-do for any MBA student. The Excel dashboard projects are excellent and I've already used them in my summer internship presentation.",
+    rating: 5,
+    avatar: "SP",
+  },
+];
