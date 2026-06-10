@@ -10,20 +10,20 @@ import { faqs } from "@/data/faqs";
 import { getPublishedCoursesServer } from "@/services/courses";
 import {
   ArrowRight, CheckCircle, BookOpen, Users, Award, TrendingUp,
-  BarChart2, Briefcase, MessageSquare, Star, Target, ShieldCheck,
+  BarChart2, Briefcase, PenTool, FileText, UserCheck, Receipt, ShieldCheck,
 } from "lucide-react";
 
 export const revalidate = 3600; // revalidate homepage every 1 hour (ISR)
 
 const categories = [
-  { name: "Digital Marketing", icon: TrendingUp },
-  { name: "HR Management", icon: Users },
-  { name: "Business Analytics", icon: BarChart2 },
-  { name: "Banking & Finance", icon: Briefcase },
-  { name: "Sales & Marketing", icon: Target },
-  { name: "Communication Skills", icon: MessageSquare },
-  { name: "Leadership Skills", icon: Star },
-  { name: "Operations Management", icon: ShieldCheck },
+  { name: "Digital Marketing", icon: TrendingUp, href: "/courses/digital-marketing-with-ai" },
+  { name: "HR Management", icon: Users, href: "/courses/human-resource-management" },
+  { name: "Business Analytics", icon: BarChart2, href: "/courses/business-analytics-excel-power-bi" },
+  { name: "Finance & GST", icon: Receipt, href: "/courses/finance-gst-practitioner" },
+  { name: "HR Business Partner", icon: Briefcase, href: "/courses/hr-business-partner" },
+  { name: "Labour Law", icon: FileText, href: "/courses/hr-labour-law-compliance" },
+  { name: "Graphic Design", icon: PenTool, href: "/courses/graphic-design-content-creation" },
+  { name: "HR with SEO", icon: UserCheck, href: "/courses/digital-marketing-with-seo" },
 ];
 
 const whyUs = [
@@ -154,7 +154,7 @@ export default function HomePage() {
           <SectionHeading label="Explore" title="Learning Categories" subtitle="Browse by category and find the perfect course for your career goals." />
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {categories.map((cat) => (
-              <Link key={cat.name} href={`/courses?category=${encodeURIComponent(cat.name)}`}
+              <Link key={cat.name} href={cat.href}
                 className="group bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md hover:border-[#003A99] transition-all text-center">
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-105 transition-transform" style={{ backgroundColor: "#e8f0fe" }}>
                   <cat.icon className="w-6 h-6" style={{ color: "#003A99" }} />
@@ -171,7 +171,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading label="Students Love Us" title="What Our Students Say" subtitle="Real stories from students who transformed their skills and careers with SkillZuva." />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {testimonials.map((t) => <TestimonialCard key={t.id} testimonial={t} />)}
+            {testimonials.map((t, i) => <TestimonialCard key={t.id} testimonial={t} index={i} />)}
           </div>
         </div>
       </section>
