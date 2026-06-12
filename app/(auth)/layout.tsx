@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BookOpen } from "lucide-react";
+import Image from "next/image";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -15,23 +15,22 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <div className="absolute top-1/2 right-[-40px] w-48 h-48 rounded-full border border-white/10" />
 
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 relative z-10">
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-white/20">
-            <BookOpen className="w-5 h-5 text-white" />
-          </div>
-          <span className="text-2xl font-bold text-white">
-            Skill<span style={{ color: "#FF6B1A" }}>Zuva</span>
-          </span>
+        <Link href="/" className="relative z-10">
+          <Image
+            src="/logo-removebg-preview.png"
+            alt="SkillZuva"
+            width={180}
+            height={60}
+            style={{ width: 180, height: "auto", objectFit: "contain", filter: "brightness(0) invert(1)" }}
+            priority
+          />
         </Link>
 
         {/* Center content */}
         <div className="relative z-10">
-          <h2 className="text-4xl font-bold text-white leading-tight mb-4">
+          <h2 className="text-4xl font-bold text-white leading-tight mb-8">
             Transform Knowledge<br />Into Skills
           </h2>
-          <p className="text-blue-200 text-base leading-relaxed mb-8">
-            Join 12,000+ students building business, finance, marketing, and communication skills on India&apos;s premier learning platform.
-          </p>
 
           {/* Stats */}
           <div className="grid grid-cols-2 gap-4">
@@ -70,16 +69,14 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div className="flex-1 flex flex-col justify-center px-6 py-12 sm:px-10 lg:px-16 bg-gray-50">
         {/* Mobile logo */}
         <div className="lg:hidden mb-8">
-          <Link href="/" className="flex items-center gap-2">
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center"
-              style={{ backgroundColor: "#003A99" }}
-            >
-              <BookOpen className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-xl font-bold" style={{ color: "#003A99" }}>
-              Skill<span style={{ color: "#FF6B1A" }}>Zuva</span>
-            </span>
+          <Link href="/">
+            <Image
+              src="/logo-removebg-preview.png"
+              alt="SkillZuva"
+              width={160}
+              height={52}
+              style={{ width: 160, height: "auto", objectFit: "contain" }}
+            />
           </Link>
         </div>
 

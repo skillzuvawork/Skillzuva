@@ -10,9 +10,9 @@ export const metadata: Metadata = {
 const team = [
   { initials: "DSB", name: "Dudekula Siddik Basha", role: "Founder & CEO" },
   { initials: "DRH", name: "Dudekula Rizwana Hussain", role: "Co-Founder" },
-  { initials: "RRT", name: "Ravuri Ravi Teja", role: "Director / CTO" },
-  { initials: "BJS", name: "Bathula Jay Sai Ram", role: "Managing Director" },
+  { initials: "BJS", name: "Battula Jaya SaiRam", role: "Managing Director" },
   { initials: "ST", name: "Siddhartha Teluguntla", role: "CFO" },
+  { initials: "RRT", name: "Jarpula Pavan Kumar", role: "Business Unit Director" },
 ];
 
 const values = [

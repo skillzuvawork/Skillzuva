@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, BookOpen, TrendingUp, User,
@@ -51,21 +52,19 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
   }
 
   return (
-    <aside className="hidden md:flex flex-col w-60 shrink-0 bg-white border-r border-gray-100 min-h-screen">
+    <aside className="hidden md:flex flex-col w-60 shrink-0 bg-white border-r border-gray-100 h-screen sticky top-0 overflow-y-auto">
       {/* Logo */}
-      <div className="px-6 py-5 border-b border-gray-100">
-        <Link href="/" className="flex items-center gap-2">
-          <div
-            className="w-7 h-7 rounded-lg flex items-center justify-center"
-            style={{ backgroundColor: "#003A99" }}
-          >
-            <BookOpen className="w-3.5 h-3.5 text-white" />
-          </div>
-          <span className="text-lg font-bold" style={{ color: "#003A99" }}>
-            Skill<span style={{ color: "#FF6B1A" }}>Zuva</span>
-          </span>
+      <div className="px-4 py-3 border-b border-gray-100 flex flex-col gap-0.5">
+        <Link href="/">
+          <Image
+            src="/logo-removebg-preview.png"
+            alt="SkillZuva"
+            width={90}
+            height={30}
+            style={{ width: 90, height: "auto", objectFit: "contain" }}
+          />
         </Link>
-        <p className="text-xs text-gray-400 mt-1 ml-9">{roleLabels[role]}</p>
+        <p className="text-[11px] text-gray-400 leading-none">{roleLabels[role]}</p>
       </div>
 
       {/* Nav Items */}

@@ -27,6 +27,7 @@ export const metadata: Metadata = {
     title: "SkillZuva — Transform Knowledge Into Skills",
     description:
       "India's premier online learning platform for business, finance, marketing, and communication skills.",
+    images: [{ url: "/logo-removebg-preview.png", width: 400, height: 200, alt: "SkillZuva" }],
   },
 };
 

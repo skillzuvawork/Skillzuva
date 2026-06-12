@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { BookOpen, Mail, Phone, MapPin } from "lucide-react";
+import Image from "next/image";
+import { Mail, Phone, MapPin } from "lucide-react";
 
 const courseLinks = [
   { label: "Digital Marketing with AI", href: "/courses/digital-marketing-with-ai" },
@@ -26,13 +27,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {/* Brand + Contact */}
           <div>
-            <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#003A99" }}>
-                <BookOpen className="w-4 h-4 text-white" />
-              </div>
-              <span className="text-xl font-bold">
-                Skill<span style={{ color: "#FF6B1A" }}>Zuva</span>
-              </span>
+            <Link href="/" className="flex items-center mb-4">
+              <Image
+                src="/logo-removebg-preview.png"
+                alt="SkillZuva"
+                width={180}
+                height={60}
+                style={{ width: 180, height: "auto", objectFit: "contain" }}
+              />
             </Link>
             <p className="text-sm text-gray-400 leading-relaxed mb-5">
               India&apos;s premier online learning platform for business, finance, marketing, and professional skills.
@@ -42,9 +44,9 @@ export default function Footer() {
                 <Mail className="w-4 h-4 text-[#FF6B1A] shrink-0 mt-0.5" />
                 <span>info@skillvoratechnologies.in</span>
               </a>
-              <a href="tel:+918885414673" className="flex items-center gap-2 hover:text-white transition-colors">
+              <a href="tel:+919381021835" className="flex items-center gap-2 hover:text-white transition-colors">
                 <Phone className="w-4 h-4 text-[#FF6B1A] shrink-0" />
-                <span>+91 88854 14673</span>
+                <span>+91 93810 21835</span>
               </a>
               <div className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 text-[#FF6B1A] shrink-0 mt-0.5" />

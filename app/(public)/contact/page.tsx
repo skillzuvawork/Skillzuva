@@ -4,8 +4,8 @@ const contactCards = [
   {
     icon: MessageCircle,
     label: "WhatsApp / Phone",
-    value: "+91 8885414673",
-    href: "https://wa.me/918885414673",
+    value: "+91 93810 21835",
+    href: "https://wa.me/919381021835",
     iconBg: "#dcfce7",
     iconColor: "#16a34a",
   },

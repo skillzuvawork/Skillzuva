@@ -5,6 +5,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import CourseCard from "@/components/CourseCard";
 import TestimonialCard from "@/components/TestimonialCard";
 import SectionHeading from "@/components/SectionHeading";
+import PartnersMarquee from "@/components/PartnersMarquee";
 import { testimonials } from "@/data/testimonials";
 import { faqs } from "@/data/faqs";
 import { getPublishedCoursesServer } from "@/services/courses";
@@ -110,6 +111,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Partners Marquee */}
+      <PartnersMarquee />
 
       {/* Featured Courses — streams in after Supabase responds */}
       <section className="py-20 bg-gray-50">
