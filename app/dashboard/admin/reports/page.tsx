@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import StatCard from "@/components/StatCard";

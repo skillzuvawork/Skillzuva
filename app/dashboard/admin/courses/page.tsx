@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import { getProfileServer } from "@/services/profiles";
@@ -6,7 +6,7 @@ import { getAllCoursesServer, getInstructorsServer } from "@/services/courses";
 import AdminCoursesClient from "@/components/dashboard/AdminCoursesClient";
 import type { CourseWithInstructor, Instructor } from "@/types/database";
 
-export const metadata: Metadata = { title: "Courses â€” Admin" };
+export const metadata: Metadata = { title: "Courses — Admin" };
 
 export default async function AdminCoursesPage() {
   const profile = await getProfileServer();

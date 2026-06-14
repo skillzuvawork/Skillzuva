@@ -42,7 +42,7 @@ export default function PartnersMarquee() {
                 alt={p.name}
                 width={140}
                 height={56}
-                style={{ width: 140, height: "auto", maxHeight: 56, objectFit: "contain" }}
+                style={{ height: "auto", maxHeight: 56, objectFit: "contain" }}
               />
             </div>
           ))}

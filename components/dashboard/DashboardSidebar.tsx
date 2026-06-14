@@ -62,6 +62,7 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
             width={90}
             height={30}
             style={{ width: 90, height: "auto", objectFit: "contain" }}
+            priority
           />
         </Link>
         <p className="text-[11px] text-gray-400 leading-none">{roleLabels[role]}</p>

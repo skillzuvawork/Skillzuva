@@ -76,6 +76,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               width={160}
               height={52}
               style={{ width: 160, height: "auto", objectFit: "contain" }}
+              priority
             />
           </Link>
         </div>

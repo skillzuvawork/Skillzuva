@@ -1,16 +1,16 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { CourseWithInstructor, Instructor } from "@/types/database";
 import { createCourse, updateCourse, deleteCourse } from "@/services/courses.client";
-import { BookOpen, Plus, Pencil, Trash2, X, Star, Users } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import { BookOpen, Plus, Pencil, Trash2, X, Star, Users, Upload, ImageIcon } from "lucide-react";
 
 interface AdminCoursesClientProps {
   initialCourses: CourseWithInstructor[];
@@ -27,7 +27,8 @@ type FormState = typeof emptyForm;
 
 export default function AdminCoursesClient({ initialCourses, instructors }: AdminCoursesClientProps) {
   const router = useRouter();
-  const [courses] = useState(initialCourses);
+  const [courses, setCourses] = useState(initialCourses);
+  useEffect(() => { setCourses(initialCourses); }, [initialCourses]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [showForm, setShowForm] = useState(false);
@@ -36,11 +37,16 @@ export default function AdminCoursesClient({ initialCourses, instructors }: Admi
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   function openNew() {
     setForm(emptyForm);
     setEditId(null);
     setError(null);
+    setImagePreview(null);
     setShowForm(true);
   }
 
@@ -60,9 +66,45 @@ export default function AdminCoursesClient({ initialCourses, instructors }: Admi
       level: course.level ?? "",
       image_url: course.image_url ?? "",
     });
+    setImagePreview(course.image_url ?? null);
     setEditId(course.id);
     setError(null);
     setShowForm(true);
+  }
+
+  async function handleImageFile(file: File) {
+    if (!file.type.startsWith("image/")) {
+      setError("Please select an image file.");
+      return;
+    }
+    setUploading(true);
+    setError(null);
+    try {
+      const supabase = createClient();
+      const ext = file.name.split(".").pop();
+      const path = `course-images/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const { error: uploadError } = await supabase.storage.from("skillzuva").upload(path, file, { upsert: true });
+      if (uploadError) throw uploadError;
+      const { data } = supabase.storage.from("skillzuva").getPublicUrl(path);
+      f("image_url", data.publicUrl);
+      setImagePreview(data.publicUrl);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Image upload failed.");
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  function handleFileInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) handleImageFile(file);
+  }
+
+  function handleDrop(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) handleImageFile(file);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -224,8 +266,44 @@ export default function AdminCoursesClient({ initialCourses, instructors }: Admi
               </div>
 
               <div className="space-y-1.5">
-                <Label className="text-sm">Image URL</Label>
-                <Input value={form.image_url} onChange={(e) => f("image_url", e.target.value)} placeholder="https://..." className="h-9 text-sm" />
+                <Label className="text-sm">Course Image</Label>
+                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileInputChange} />
+                <div
+                  onClick={() => !uploading && fileInputRef.current?.click()}
+                  onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                  onDragLeave={() => setDragOver(false)}
+                  onDrop={handleDrop}
+                  className={`relative border-2 border-dashed rounded-xl transition-colors cursor-pointer overflow-hidden ${dragOver ? "border-[#003A99] bg-[#e8f0fe]" : "border-gray-200 bg-gray-50 hover:border-[#003A99] hover:bg-[#f0f4ff]"}`}
+                  style={{ minHeight: 120 }}
+                >
+                  {imagePreview ? (
+                    <div className="relative w-full h-36">
+                      <img src={imagePreview} alt="Course image preview" className="w-full h-full object-cover rounded-xl" />
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); setImagePreview(null); f("image_url", ""); }}
+                        className="absolute top-2 right-2 bg-white/80 hover:bg-white rounded-full p-1 shadow"
+                      >
+                        <X className="w-4 h-4 text-gray-600" />
+                      </button>
+                      <div className="absolute bottom-2 left-2 bg-white/80 rounded-lg px-2 py-1 text-xs text-gray-600 flex items-center gap-1">
+                        <ImageIcon className="w-3 h-3" /> Click to replace
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center gap-2 py-8 text-gray-400">
+                      {uploading ? (
+                        <div className="w-6 h-6 border-2 border-[#003A99] border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <Upload className="w-7 h-7" style={{ color: "#003A99" }} />
+                      )}
+                      <span className="text-sm font-medium text-gray-500">
+                        {uploading ? "Uploading…" : "Click or drag & drop an image"}
+                      </span>
+                      <span className="text-xs text-gray-400">PNG, JPG, WEBP supported</span>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="flex items-center gap-2">
@@ -257,7 +335,7 @@ export default function AdminCoursesClient({ initialCourses, instructors }: Admi
             <div key={course.id} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
               <div className="h-28 flex items-center justify-center" style={{ backgroundColor: "#e8f0fe" }}>
                 {course.image_url
-                  ? <Image src={course.image_url} alt={course.title} width={300} height={112} className="w-full h-full object-cover" />
+                  ? <img src={course.image_url} alt={course.title} className="w-full h-full object-cover" />
                   : <BookOpen className="w-8 h-8" style={{ color: "#003A99" }} />}
               </div>
               <div className="p-4">
