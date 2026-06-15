@@ -54,7 +54,7 @@ export default function SignupPage() {
       if (!data.session || !data.user) throw new Error("Signup succeeded but no session returned.");
 
       // Save phone to profiles + academic info to student_profiles immediately using the fresh token
-      await upsertStudentProfileWithToken(data.session.access_token, data.user.id, {
+      await upsertStudentProfileWithToken(data.session.access_token, data.session.refresh_token, data.user.id, {
         college_name: form.collegeName || null,
         degree_name: form.degreeName || null,
         degree_type: form.degreeType || null,
@@ -244,9 +244,9 @@ export default function SignupPage() {
               className="w-4 h-4 mt-0.5 rounded border-gray-300 accent-[#003A99] shrink-0" />
             <Label htmlFor="terms" className="text-sm text-gray-600 cursor-pointer leading-relaxed">
               I agree to the{" "}
-              <Link href="#" className="font-medium" style={{ color: "#003A99" }}>Terms of Service</Link>
+              <Link href="/terms" className="font-medium" style={{ color: "#003A99" }}>Terms of Service</Link>
               {" "}and{" "}
-              <Link href="#" className="font-medium" style={{ color: "#003A99" }}>Privacy Policy</Link>
+              <Link href="/privacy" className="font-medium" style={{ color: "#003A99" }}>Privacy Policy</Link>
             </Label>
           </div>
 

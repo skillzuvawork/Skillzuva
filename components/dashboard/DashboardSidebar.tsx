@@ -61,7 +61,7 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
             alt="SkillZuva"
             width={90}
             height={30}
-            style={{ width: 90, height: "auto", objectFit: "contain" }}
+            style={{ width: "90px", height: "auto", objectFit: "contain" }}
             priority
           />
         </Link>

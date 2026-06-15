@@ -50,7 +50,7 @@ export default function Navbar() {
               alt="SkillZuva"
               width={110}
               height={36}
-              style={{ width: 110, height: "auto", objectFit: "contain" }}
+              style={{ width: "110px", height: "auto", objectFit: "contain" }}
               priority
             />
           </Link>
@@ -117,7 +117,7 @@ export default function Navbar() {
                     alt="SkillZuva"
                     width={160}
                     height={52}
-                    style={{ width: 160, height: "auto", objectFit: "contain" }}
+                    style={{ width: "160px", height: "auto", objectFit: "contain" }}
                   />
                 </Link>
                 {navLinks.map((link) => (

@@ -21,7 +21,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             alt="SkillZuva"
             width={180}
             height={60}
-            style={{ width: 180, height: "auto", objectFit: "contain", filter: "brightness(0) invert(1)" }}
+            style={{ width: "180px", height: "auto", objectFit: "contain", filter: "brightness(0) invert(1)" }}
             priority
           />
         </Link>
@@ -75,7 +75,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               alt="SkillZuva"
               width={160}
               height={52}
-              style={{ width: 160, height: "auto", objectFit: "contain" }}
+              style={{ width: "160px", height: "auto", objectFit: "contain" }}
               priority
             />
           </Link>

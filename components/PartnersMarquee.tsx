@@ -6,6 +6,7 @@ const partners = [
   { name: "KRX", src: "/krx.jpeg" },
   { name: "Swift", src: "/swift.png" },
   { name: "W3 Global", src: "/w3 global.jpeg" },
+  { name: "Momentrix Media", src: "/momentrix.jpeg" },
 ];
 
 const items = [...partners, ...partners, ...partners];
@@ -13,7 +14,6 @@ const items = [...partners, ...partners, ...partners];
 export default function PartnersMarquee() {
   return (
     <section className="bg-white border-y border-gray-100 py-12 overflow-hidden">
-      {/* Heading matching SectionHeading style */}
       <div className="text-center mb-10">
         <span
           className="inline-block text-xs font-semibold uppercase tracking-widest mb-3 px-3 py-1 rounded-full"
@@ -25,7 +25,6 @@ export default function PartnersMarquee() {
       </div>
 
       <div className="relative">
-        {/* Fade edges */}
         <div className="pointer-events-none absolute left-0 top-0 h-full w-28 z-10"
           style={{ background: "linear-gradient(to right, white, transparent)" }} />
         <div className="pointer-events-none absolute right-0 top-0 h-full w-28 z-10"
@@ -42,7 +41,7 @@ export default function PartnersMarquee() {
                 alt={p.name}
                 width={140}
                 height={56}
-                style={{ height: "auto", maxHeight: 56, objectFit: "contain" }}
+                style={{ width: 140, height: 56, objectFit: "contain" }}
               />
             </div>
           ))}

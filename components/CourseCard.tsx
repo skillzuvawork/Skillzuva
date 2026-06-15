@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Star, Clock, BookOpen, Users, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -35,8 +36,13 @@ export default function CourseCard({ course }: CourseCardProps) {
         {/* Thumbnail */}
         <div className="h-44 flex items-center justify-center relative overflow-hidden" style={{ backgroundColor: "#003A99" }}>
           {course.image_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={course.image_url} alt={course.title} className="w-full h-full object-cover" />
+            <Image
+              src={course.image_url}
+              alt={course.title}
+              fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              className="object-cover"
+            />
           ) : (
             <div className="text-center px-4">
               <BookOpen className="w-10 h-10 text-white/60 mx-auto mb-2" />

@@ -31,6 +31,7 @@ export async function upsertStudentProfile(updates: StudentProfileUpdate) {
 // Used right after signUp() — uses the fresh session token to immediately save profile data
 export async function upsertStudentProfileWithToken(
   accessToken: string,
+  refreshToken: string,
   userId: string,
   updates: StudentProfileUpdate & { phone_number?: string | null }
 ) {
@@ -38,7 +39,7 @@ export async function upsertStudentProfileWithToken(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
-  await supabase.auth.setSession({ access_token: accessToken, refresh_token: "" });
+  await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
 
   const { phone_number, ...studentUpdates } = updates;
 

@@ -33,7 +33,7 @@ export default function Footer() {
                 alt="SkillZuva"
                 width={180}
                 height={60}
-                style={{ width: 180, height: "auto", objectFit: "contain" }}
+                style={{ width: "180px", height: "auto", objectFit: "contain" }}
               />
             </Link>
             <p className="text-sm text-gray-400 leading-relaxed mb-5">
@@ -89,8 +89,8 @@ export default function Footer() {
             © {new Date().getFullYear()} SkillZuva. All rights reserved.
           </p>
           <div className="flex gap-6">
-            <Link href="#" className="text-sm text-gray-500 hover:text-white transition-colors">Privacy Policy</Link>
-            <Link href="#" className="text-sm text-gray-500 hover:text-white transition-colors">Terms &amp; Conditions</Link>
+            <Link href="/privacy" className="text-sm text-gray-500 hover:text-white transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="text-sm text-gray-500 hover:text-white transition-colors">Terms &amp; Conditions</Link>
           </div>
         </div>
       </div>

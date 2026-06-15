@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Database } from "@/types/database";
 
 const ROLE_COOKIE = "sz_role";
-const ROLE_COOKIE_MAX_AGE = 60 * 60; // 1 hour
+const ROLE_COOKIE_MAX_AGE = 60 * 5; // 5 minutes
 
 export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl;

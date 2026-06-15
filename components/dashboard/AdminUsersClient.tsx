@@ -56,6 +56,7 @@ export default function AdminUsersClient({ users, enrollmentsByUser }: Props) {
         <select
           value={degreeFilter}
           onChange={(e) => setDegreeFilter(e.target.value)}
+          aria-label="Filter by degree"
           className="h-9 rounded-lg border border-gray-200 text-sm px-3 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#003A99]/20"
         >
           <option value="all">All Degrees</option>
