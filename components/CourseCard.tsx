@@ -7,6 +7,7 @@ import { CourseWithInstructor } from "@/types/database";
 
 interface CourseCardProps {
   course: CourseWithInstructor;
+  index?: number;
 }
 
 const categoryColors: Record<string, string> = {
@@ -20,7 +21,9 @@ const categoryColors: Record<string, string> = {
   "Operations Management": "bg-yellow-50 text-yellow-700",
 };
 
-export default function CourseCard({ course }: CourseCardProps) {
+export default function CourseCard({ course, index = 99 }: CourseCardProps) {
+  // First 4 cards are above-fold on all screen sizes — load eagerly to avoid LCP warning
+  const isAboveFold = index < 4;
   const category = course.category ?? "";
   const categoryColor = categoryColors[category] ?? "bg-gray-100 text-gray-600";
   const price = course.discount_price ?? course.price;
@@ -42,6 +45,8 @@ export default function CourseCard({ course }: CourseCardProps) {
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
               className="object-cover"
+              priority={isAboveFold}
+              loading={isAboveFold ? "eager" : "lazy"}
             />
           ) : (
             <div className="text-center px-4">

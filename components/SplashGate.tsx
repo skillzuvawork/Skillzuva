@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import SplashScreen from "./SplashScreen";
 
 const STORAGE_KEY = "sz_launched";
-const LAUNCH_DATE = new Date("2026-06-15T16:30:00+05:30");
+const LAUNCH_DATE = new Date("2026-06-15T19:03:00+05:30");
 
 export default function SplashGate({ children }: { children: React.ReactNode }) {
   const [showSplash, setShowSplash] = useState(false);

@@ -11,17 +11,18 @@ import {
   SliderPrevButton,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 
-const LAUNCH_DATE = new Date("2026-06-15T16:30:00+05:30");
+const LAUNCH_DATE = new Date("2026-06-15T19:18:00+05:30");
 const STORAGE_KEY = "sz_launched";
 
-const promoImages = [
-  { src: "/timeline.jpeg",  alt: "SkillZuva Timeline" },
-  { src: "/jan2022.jpeg",   alt: "January 2022" },
-  { src: "/april2023.jpeg", alt: "April 2023" },
-  { src: "/july2024.jpeg",  alt: "July 2024" },
-  { src: "/jan2025.jpeg",   alt: "January 2025" },
+// Year-order: jan2022 → april2023 → july2024 → jan2025 → timeline
+const journeyImages = [
+  { src: "/jan2022.jpeg",   alt: "January 2022 — Foundation & Establishment" },
+  { src: "/april2023.jpeg", alt: "April 2023 — Platform Launch & Initial Traction" },
+  { src: "/july2024.jpeg",  alt: "July 2024 — Operational Growth & Success" },
+  { src: "/jan2025.jpeg",   alt: "January 2025 — Achieving Excellence & NASSCOM" },
+  { src: "/timeline.jpeg",  alt: "SkillZuva Company Timeline" },
 ];
 
 const partners = [
@@ -32,6 +33,9 @@ const partners = [
   { name: "W3 Global",       src: "/w3 global.jpeg" },
   { name: "Momentrix Media", src: "/momentrix.jpeg" },
 ];
+
+// Triple the partners so the marquee loops seamlessly
+const marqueeItems = [...partners, ...partners, ...partners];
 
 function getTimeLeft() {
   const diff = LAUNCH_DATE.getTime() - Date.now();
@@ -50,9 +54,9 @@ function pad(n: number) {
 
 function Confetti() {
   const colors = ["#FF6B1A", "#ffffff", "#FFE600", "#00C896", "#ff4d6d"];
-  const pieces = Array.from({ length: 90 }, (_, i) => ({
+  const pieces = Array.from({ length: 80 }, (_, i) => ({
     color:    colors[i % colors.length],
-    left:     `${(i * 1.12) % 100}%`,
+    left:     `${(i * 1.25) % 100}%`,
     delay:    `${((i * 0.06) % 2.5).toFixed(2)}s`,
     duration: `${(2.2 + (i * 0.04) % 1.8).toFixed(2)}s`,
     size:     i % 3 === 0 ? 12 : 8,
@@ -79,26 +83,23 @@ function Confetti() {
   );
 }
 
-type Phase = "countdown" | "launch-reveal" | "carousel" | "partners";
-
 export default function SplashScreen({ onDismiss }: { onDismiss: () => void }) {
   const initial = getTimeLeft();
   const [timeLeft, setTimeLeft] = useState(initial);
-  const [phase, setPhase]       = useState<Phase>(initial ? "countdown" : "launch-reveal");
+  const [launched, setLaunched] = useState(!initial);
   const [confetti, setConfetti] = useState(false);
-  const timerRef  = useRef<ReturnType<typeof setInterval> | null>(null);
-  // Autoplay plugin ref — created once, stable across renders
-  const autoplayRef = useRef(Autoplay({ delay: 2800, stopOnInteraction: false }));
+  const timerRef    = useRef<ReturnType<typeof setInterval> | null>(null);
+  const autoplayRef = useRef(Autoplay({ delay: 3000, stopOnInteraction: false }));
+  const carouselRef = useRef<HTMLDivElement>(null);
 
-  // Countdown tick
   useEffect(() => {
-    if (phase !== "countdown") return;
+    if (launched) return;
     timerRef.current = setInterval(() => {
       const t = getTimeLeft();
       if (!t) {
         clearInterval(timerRef.current!);
-        setPhase("launch-reveal");
         setTimeLeft(null);
+        setLaunched(true);
         setConfetti(true);
         setTimeout(() => setConfetti(false), 5000);
       } else {
@@ -106,236 +107,227 @@ export default function SplashScreen({ onDismiss }: { onDismiss: () => void }) {
       }
     }, 1000);
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [phase]);
+  }, [launched]);
 
   function handleEnter() {
     localStorage.setItem(STORAGE_KEY, "true");
     onDismiss();
   }
 
-  return (
-    <div className="fixed inset-0 z-[100] flex flex-col overflow-hidden" style={{ backgroundColor: "#003A99" }}>
-      {/* Decorative bg circles */}
-      <div className="pointer-events-none absolute -top-20 -right-20 w-72 h-72 rounded-full border border-white/10" />
-      <div className="pointer-events-none absolute -bottom-16 -left-16 w-56 h-56 rounded-full border border-white/10" />
+  function scrollToCarousel() {
+    carouselRef.current?.scrollIntoView({ behavior: "smooth" });
+  }
 
+  return (
+    <div className="fixed inset-0 z-[100] overflow-y-auto overflow-x-hidden" style={{ backgroundColor: "#003A99" }}>
       {confetti && <Confetti />}
 
-      {/* ════ COUNTDOWN ════ */}
-      {phase === "countdown" && (
-        <div className="flex-1 flex flex-col items-center justify-center gap-6 px-6 py-8 text-center">
-          {/* Logo — responsive width via clamp, height auto */}
-          <div style={{ width: "clamp(140px, 30vw, 220px)" }}>
+      {/* ══════════════════════════════════════════════
+          SCREEN 1 — Countdown (full viewport height)
+      ══════════════════════════════════════════════ */}
+      <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+
+        {/* ── Blurred partner marquee background ── */}
+        <div className="absolute inset-0 flex flex-col justify-center gap-6 overflow-hidden pointer-events-none select-none" style={{ filter: "blur(2px)", opacity: 0.18 }}>
+          {/* Row 1 — scrolls left */}
+          <div className="flex gap-10 w-max" style={{ animation: "marquee-left 22s linear infinite" }}>
+            {marqueeItems.map((p, i) => (
+              <div key={i} className="relative shrink-0" style={{ width: 120, height: 48 }}>
+                <Image src={p.src} alt={p.name} fill className="object-contain" sizes="120px" />
+              </div>
+            ))}
+          </div>
+          {/* Row 2 — scrolls right */}
+          <div className="flex gap-10 w-max" style={{ animation: "marquee-right 26s linear infinite" }}>
+            {[...marqueeItems].reverse().map((p, i) => (
+              <div key={i} className="relative shrink-0" style={{ width: 120, height: 48 }}>
+                <Image src={p.src} alt={p.name} fill className="object-contain" sizes="120px" />
+              </div>
+            ))}
+          </div>
+          {/* Row 3 — scrolls left slower */}
+          <div className="flex gap-10 w-max" style={{ animation: "marquee-left 32s linear infinite" }}>
+            {marqueeItems.map((p, i) => (
+              <div key={i} className="relative shrink-0" style={{ width: 120, height: 48 }}>
+                <Image src={p.src} alt={p.name} fill className="object-contain" sizes="120px" />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Decorative rings */}
+        <div className="pointer-events-none absolute -top-24 -right-24 w-80 h-80 rounded-full border border-white/10" />
+        <div className="pointer-events-none absolute -bottom-20 -left-20 w-64 h-64 rounded-full border border-white/10" />
+
+        {/* ── Countdown content ── */}
+        <div className="relative z-10 flex flex-col items-center gap-6 px-6 py-12 text-center">
+          {/* Logo — fill inside a sized container avoids any width/height prop conflict */}
+          <div
+            className="relative"
+            style={{ width: "clamp(140px, 28vw, 210px)", height: "clamp(47px, 9.5vw, 70px)" }}
+          >
             <Image
               src="/logo-removebg-preview.png"
               alt="SkillZuva"
-              width={540}
-              height={180}
+              fill
               priority
-              className="w-full h-auto object-contain"
+              sizes="(max-width: 768px) 210px, 210px"
+              className="object-contain"
             />
           </div>
 
           <div>
-            <p className="text-white/70 text-xs sm:text-sm uppercase tracking-[0.2em] mb-2 font-semibold">
+            <p className="text-white/70 text-xs sm:text-sm uppercase tracking-[0.22em] mb-2 font-semibold">
               Something big is coming
             </p>
-            <h1 className="font-bold text-white" style={{ fontSize: "clamp(1.25rem, 4vw, 2.75rem)" }}>
+            <h1 className="font-bold text-white" style={{ fontSize: "clamp(1.3rem, 4.5vw, 2.8rem)" }}>
               SkillZuva is Launching Soon
             </h1>
           </div>
 
-          {/* Countdown blocks */}
-          <div className="flex items-center justify-center gap-2 sm:gap-4">
-            {[
-              { label: "DAYS", value: timeLeft?.days    ?? 0 },
-              { label: "HRS",  value: timeLeft?.hours   ?? 0 },
-              { label: "MIN",  value: timeLeft?.minutes ?? 0 },
-              { label: "SEC",  value: timeLeft?.seconds ?? 0 },
-            ].map(({ label, value }, i) => (
-              <div key={label} className="flex items-center gap-2 sm:gap-4">
-                <div className="flex flex-col items-center">
-                  <div
-                    className="flex items-center justify-center rounded-xl font-bold shadow-lg text-white"
-                    style={{
-                      backgroundColor: "#FF6B1A",
-                      width:  "clamp(48px, 13vw, 88px)",
-                      height: "clamp(48px, 13vw, 88px)",
-                      fontSize: "clamp(1.1rem, 4.5vw, 2.25rem)",
-                    }}
-                  >
-                    {pad(value)}
+          {/* Timer blocks */}
+          {!launched ? (
+            <div className="flex items-center justify-center gap-2 sm:gap-4">
+              {[
+                { label: "DAYS", value: timeLeft?.days    ?? 0 },
+                { label: "HRS",  value: timeLeft?.hours   ?? 0 },
+                { label: "MIN",  value: timeLeft?.minutes ?? 0 },
+                { label: "SEC",  value: timeLeft?.seconds ?? 0 },
+              ].map(({ label, value }, i) => (
+                <div key={label} className="flex items-center gap-2 sm:gap-4">
+                  <div className="flex flex-col items-center">
+                    <div
+                      className="flex items-center justify-center rounded-xl font-bold shadow-lg text-white"
+                      style={{
+                        backgroundColor: "#FF6B1A",
+                        width:  "clamp(52px, 14vw, 92px)",
+                        height: "clamp(52px, 14vw, 92px)",
+                        fontSize: "clamp(1.2rem, 5vw, 2.4rem)",
+                      }}
+                    >
+                      {pad(value)}
+                    </div>
+                    <span className="text-white/60 text-[9px] sm:text-[11px] mt-1.5 font-semibold tracking-widest">
+                      {label}
+                    </span>
                   </div>
-                  <span className="text-white/60 text-[9px] sm:text-[11px] mt-1.5 font-semibold tracking-widest">
-                    {label}
-                  </span>
+                  {i < 3 && (
+                    <span className="text-white/40 font-bold pb-5" style={{ fontSize: "clamp(1.2rem, 4vw, 2rem)" }}>
+                      :
+                    </span>
+                  )}
                 </div>
-                {i < 3 && (
-                  <span className="text-white/40 font-bold pb-5" style={{ fontSize: "clamp(1.1rem, 3.5vw, 1.75rem)" }}>
-                    :
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            /* Post-launch celebration */
+            <div className="text-center">
+              <div className="mb-2" style={{ fontSize: "clamp(2.5rem, 8vw, 4rem)" }}>🚀</div>
+              <h2 className="font-bold text-white" style={{ fontSize: "clamp(1.4rem, 5vw, 2.5rem)" }}>
+                We&apos;re Live!
+              </h2>
+              <p className="text-white/70 text-sm mt-1">SkillZuva is officially launched</p>
+            </div>
+          )}
 
           <p className="text-white/50 text-xs sm:text-sm">
             Launching on{" "}
-            <span className="text-white font-semibold">15 June 2026, 4:30 PM IST</span>
+            <span className="text-white font-semibold">15 June 2026, 7:03 PM IST</span>
           </p>
-        </div>
-      )}
 
-      {/* ════ LAUNCH REVEAL ════ */}
-      {phase === "launch-reveal" && (
-        <div className="flex-1 flex flex-col items-center justify-center gap-6 px-6 py-8 text-center">
-          <div style={{ width: "clamp(140px, 30vw, 200px)" }}>
-            <Image
-              src="/logo-removebg-preview.png"
-              alt="SkillZuva"
-              width={540}
-              height={180}
-              priority
-              className="w-full h-auto object-contain"
-            />
-          </div>
-          <div>
-            <div className="mb-3" style={{ fontSize: "clamp(2.5rem, 8vw, 4.5rem)" }}>🚀</div>
-            <h1 className="font-bold text-white mb-3" style={{ fontSize: "clamp(1.5rem, 5vw, 3rem)" }}>
-              We&apos;re Live!
-            </h1>
-            <p className="text-white/70 text-sm sm:text-base max-w-sm mx-auto">
-              SkillZuva is officially launched — Transform Knowledge Into Skills
-            </p>
-          </div>
+          {/* Scroll cue */}
           <button
-            onClick={() => setPhase("carousel")}
-            className="px-10 py-4 rounded-2xl text-white font-bold shadow-xl hover:opacity-90 active:scale-95 transition-all"
-            style={{ backgroundColor: "#FF6B1A", fontSize: "clamp(0.9rem, 2.5vw, 1.1rem)" }}
+            onClick={scrollToCarousel}
+            className="mt-2 flex flex-col items-center gap-1 text-white/40 hover:text-white/70 transition-colors"
+            aria-label="Scroll to our journey"
           >
-            🎓 Launch SkillZuva
+            <span className="text-xs tracking-widest uppercase font-semibold">Our Journey</span>
+            <ChevronDown className="w-5 h-5 animate-bounce" />
           </button>
         </div>
-      )}
+      </section>
 
-      {/* ════ CAROUSEL ════ */}
-      {phase === "carousel" && (
-        <div className="flex-1 flex flex-col items-center justify-center gap-4 py-6 overflow-hidden">
-          <div className="text-center shrink-0 px-4">
-            <p className="text-white/60 text-xs uppercase tracking-widest mb-1 font-semibold">Our Journey</p>
-            <h2 className="font-bold text-white" style={{ fontSize: "clamp(1.1rem, 3.5vw, 1.75rem)" }}>
-              From Vision to Reality
-            </h2>
-          </div>
-
-          {/* Scale carousel — takes remaining height */}
-          <div className="w-full flex-1 min-h-0 flex items-center">
-            <Carousel
-              options={{ loop: true }}
-              isScale={true}
-              plugins={[autoplayRef.current]}
-              className="w-full"
-            >
-              <SliderContainer>
-                {promoImages.map((img) => (
-                  <Slider key={img.src} className="w-[80%] sm:w-[65%] md:w-[55%]">
-                    <div
-                      className="rounded-2xl overflow-hidden shadow-2xl mx-auto"
-                      style={{ aspectRatio: "4/3", maxHeight: "52vh" }}
-                    >
-                      <Image
-                        src={img.src}
-                        alt={img.alt}
-                        width={600}
-                        height={450}
-                        className="w-full h-full object-contain"
-                        style={{ backgroundColor: "rgba(255,255,255,0.06)" }}
-                        sizes="(max-width: 640px) 80vw, (max-width: 1024px) 65vw, 55vw"
-                      />
-                    </div>
-                  </Slider>
-                ))}
-              </SliderContainer>
-
-              <SliderPrevButton className="absolute top-1/2 -translate-y-1/2 left-3 z-10 p-2 rounded-full bg-white/20 hover:bg-white/40 text-white backdrop-blur-sm disabled:opacity-20 transition-all">
-                <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
-              </SliderPrevButton>
-              <SliderNextButton className="absolute top-1/2 -translate-y-1/2 right-3 z-10 p-2 rounded-full bg-white/20 hover:bg-white/40 text-white backdrop-blur-sm disabled:opacity-20 transition-all">
-                <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
-              </SliderNextButton>
-
-              <div className="flex justify-center pt-2">
-                <SliderDotButton activeClass="bg-[#FF6B1A]" />
-              </div>
-            </Carousel>
-          </div>
-
-          <button
-            onClick={() => setPhase("partners")}
-            className="shrink-0 px-8 py-3 rounded-xl text-white font-bold shadow-lg hover:opacity-90 active:scale-95 transition-all"
-            style={{ backgroundColor: "#FF6B1A", fontSize: "clamp(0.85rem, 2.2vw, 1rem)" }}
-          >
-            Meet Our Partners →
-          </button>
+      {/* ══════════════════════════════════════════════
+          SCREEN 2 — Year-order Journey Carousel
+      ══════════════════════════════════════════════ */}
+      <section ref={carouselRef} className="min-h-screen flex flex-col items-center justify-center gap-6 py-12 px-4" style={{ backgroundColor: "#002d7a" }}>
+        <div className="text-center shrink-0">
+          <span className="inline-block text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-3" style={{ backgroundColor: "#FF6B1A", color: "#fff" }}>
+            Our Journey
+          </span>
+          <h2 className="font-bold text-white" style={{ fontSize: "clamp(1.3rem, 4vw, 2rem)" }}>
+            From Vision to Reality
+          </h2>
+          <p className="text-white/50 text-xs sm:text-sm mt-1">2022 → 2023 → 2024 → 2025 → Today</p>
         </div>
-      )}
 
-      {/* ════ PARTNERS ════ */}
-      {phase === "partners" && (
-        <div className="flex-1 flex flex-col items-center justify-center gap-5 px-4 py-6 overflow-hidden">
-          <div className="text-center shrink-0">
-            <div style={{ width: "clamp(100px, 22vw, 160px)", margin: "0 auto" }}>
-              <Image
-                src="/logo-removebg-preview.png"
-                alt="SkillZuva"
-                width={540}
-                height={180}
-                className="w-full h-auto object-contain"
-              />
+        <div className="w-full max-w-4xl">
+          <Carousel
+            options={{ loop: true }}
+            isScale={true}
+            plugins={[autoplayRef.current]}
+            className="w-full"
+          >
+            <SliderContainer>
+              {journeyImages.map((img) => (
+                <Slider key={img.src} className="w-[82%] sm:w-[68%] md:w-[58%]">
+                  <div
+                    className="rounded-2xl overflow-hidden shadow-2xl mx-auto bg-white/5"
+                    style={{ aspectRatio: "4/3" }}
+                  >
+                    <Image
+                      src={img.src}
+                      alt={img.alt}
+                      width={640}
+                      height={480}
+                      className="w-full h-full object-contain"
+                      sizes="(max-width: 640px) 82vw, (max-width: 1024px) 68vw, 58vw"
+                    />
+                  </div>
+                  <p className="text-center text-white/60 text-xs mt-3 px-2">{img.alt}</p>
+                </Slider>
+              ))}
+            </SliderContainer>
+
+            <SliderPrevButton className="absolute top-[45%] -translate-y-1/2 left-1 sm:left-3 z-10 p-2 rounded-full bg-white/15 hover:bg-white/35 text-white backdrop-blur-sm disabled:opacity-20 transition-all">
+              <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+            </SliderPrevButton>
+            <SliderNextButton className="absolute top-[45%] -translate-y-1/2 right-1 sm:right-3 z-10 p-2 rounded-full bg-white/15 hover:bg-white/35 text-white backdrop-blur-sm disabled:opacity-20 transition-all">
+              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+            </SliderNextButton>
+
+            <div className="flex justify-center pt-4">
+              <SliderDotButton activeClass="bg-[#FF6B1A]" />
             </div>
-            <p className="text-white/60 text-xs uppercase tracking-widest mt-3 mb-1 font-semibold">Trusted by</p>
-            <h2 className="font-bold text-white" style={{ fontSize: "clamp(1.1rem, 3.5vw, 1.75rem)" }}>
-              Our Digital Partners
-            </h2>
-          </div>
-
-          {/* Partners grid — 3 cols, larger cards */}
-          <div className="grid grid-cols-3 gap-3 w-full" style={{ maxWidth: "min(640px, 92vw)" }}>
-            {partners.map((p) => (
-              <div
-                key={p.name}
-                className="flex flex-col items-center justify-center rounded-2xl py-4 px-2"
-                style={{ backgroundColor: "rgba(255,255,255,0.96)" }}
-              >
-                {/* Partner logo: fixed px in style, matching width/height props so no warning */}
-                <div className="relative" style={{ width: "clamp(70px, 14vw, 120px)", height: "clamp(30px, 6vw, 52px)" }}>
-                  <Image
-                    src={p.src}
-                    alt={p.name}
-                    fill
-                    className="object-contain"
-                    sizes="(max-width: 640px) 14vw, 120px"
-                  />
-                </div>
-                <span
-                  className="mt-2 font-semibold text-center leading-tight"
-                  style={{ color: "#003A99", fontSize: "clamp(9px, 1.8vw, 13px)" }}
-                >
-                  {p.name}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          <button
-            onClick={handleEnter}
-            className="shrink-0 px-10 py-3 rounded-2xl text-white font-bold shadow-xl hover:opacity-90 active:scale-95 transition-all"
-            style={{ backgroundColor: "#FF6B1A", fontSize: "clamp(0.85rem, 2.2vw, 1rem)" }}
-          >
-            Enter SkillZuva 🎓
-          </button>
+          </Carousel>
         </div>
-      )}
+
+        {/* ── Launch button — only visible after countdown hits zero ── */}
+        {launched && (
+          <div className="flex flex-col items-center gap-3 mt-4">
+            <button
+              onClick={handleEnter}
+              className="px-12 py-4 rounded-2xl text-white font-bold shadow-2xl hover:opacity-90 active:scale-95 transition-all"
+              style={{ backgroundColor: "#FF6B1A", fontSize: "clamp(1rem, 2.5vw, 1.15rem)" }}
+            >
+              Launch SkillZuva 🎓
+            </button>
+            <p className="text-white/40 text-xs">Welcome to SkillZuva!</p>
+          </div>
+        )}
+      </section>
+
+      {/* ── Global keyframes ── */}
+      <style>{`
+        @keyframes marquee-left {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(calc(-100% / 3)); }
+        }
+        @keyframes marquee-right {
+          0%   { transform: translateX(calc(-100% / 3)); }
+          100% { transform: translateX(0); }
+        }
+      `}</style>
     </div>
   );
 }

@@ -52,7 +52,7 @@ async function FeaturedCourses() {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      {featured.map((course) => <CourseCard key={course.id} course={course} />)}
+      {featured.map((course, i) => <CourseCard key={course.id} course={course} index={i} />)}
     </div>
   );
 }
