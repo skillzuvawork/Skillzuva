@@ -12,7 +12,7 @@ const team = [
   { initials: "DRH", name: "Dudekula Rizwana Hussain", role: "Co-Founder" },
   { initials: "BJS", name: "Battula Jaya SaiRam", role: "Managing Director" },
   { initials: "ST", name: "Siddhartha Teluguntla", role: "CFO" },
-  { initials: "RRT", name: "Jarpula Pavan Kumar", role: "Business Unit Director" },
+  { initials: "RRT", name: "Sampangi Vamshi", role: "Business Unit Director" },
 ];
 
 const values = [

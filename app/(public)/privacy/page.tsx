@@ -69,7 +69,7 @@ export default function PrivacyPage() {
             <li>Request deletion of your account and associated data.</li>
             <li>Withdraw consent for marketing communications at any time.</li>
           </ul>
-          <p className="mt-2">To exercise these rights, contact us at <a href="mailto:info@skillvoratechnologies.in" className="text-[#003A99] underline">info@skillvoratechnologies.in</a>.</p>
+          <p className="mt-2">To exercise these rights, contact us at <a href="mailto:info@skillzuvatechnologies.com" className="text-[#003A99] underline">info@skillzuvatechnologies.com</a>.</p>
         </section>
 
         <section>
@@ -85,7 +85,7 @@ export default function PrivacyPage() {
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">10. Contact</h2>
           <p>For privacy-related queries:<br />
-            <a href="mailto:info@skillvoratechnologies.in" className="text-[#003A99] underline">info@skillvoratechnologies.in</a><br />
+            <a href="mailto:info@skillzuvatechnologies.com" className="text-[#003A99] underline">info@skillzuvatechnologies.com</a><br />
             SkillZuva Technologies, Hyderabad, Telangana, India
           </p>
         </section>

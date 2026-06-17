@@ -19,8 +19,9 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           <Image
             src="/logo-removebg-preview.png"
             alt="SkillZuva"
-            width={180}
-            height={60}
+            width={0}
+            height={0}
+            sizes="180px"
             style={{ width: "180px", height: "auto", objectFit: "contain", filter: "brightness(0) invert(1)" }}
             priority
           />
@@ -73,8 +74,9 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             <Image
               src="/logo-removebg-preview.png"
               alt="SkillZuva"
-              width={160}
-              height={52}
+              width={0}
+              height={0}
+              sizes="160px"
               style={{ width: "160px", height: "auto", objectFit: "contain" }}
               priority
             />

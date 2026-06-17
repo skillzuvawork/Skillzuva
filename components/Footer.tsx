@@ -31,8 +31,9 @@ export default function Footer() {
               <Image
                 src="/logo-removebg-preview.png"
                 alt="SkillZuva"
-                width={180}
-                height={60}
+                width={0}
+                height={0}
+                sizes="180px"
                 style={{ width: "180px", height: "auto", objectFit: "contain" }}
               />
             </Link>
@@ -40,9 +41,9 @@ export default function Footer() {
               India&apos;s premier online learning platform for business, finance, marketing, and professional skills.
             </p>
             <div className="flex flex-col gap-2.5 text-sm text-gray-400">
-              <a href="mailto:info@skillvoratechnologies.in" className="flex items-start gap-2 hover:text-white transition-colors">
+              <a href="mailto:info@skillzuvatechnologies.com" className="flex items-start gap-2 hover:text-white transition-colors">
                 <Mail className="w-4 h-4 text-[#FF6B1A] shrink-0 mt-0.5" />
-                <span>info@skillvoratechnologies.in</span>
+                <span>info@skillzuvatechnologies.com</span>
               </a>
               <a href="tel:+919381021835" className="flex items-center gap-2 hover:text-white transition-colors">
                 <Phone className="w-4 h-4 text-[#FF6B1A] shrink-0" />

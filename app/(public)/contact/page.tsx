@@ -12,8 +12,8 @@ const contactCards = [
   {
     icon: Mail,
     label: "Email Us",
-    value: "info@skillvoratechnologies.in",
-    href: "mailto:info@skillvoratechnologies.in",
+    value: "info@skillzuvatechnologies.com",
+    href: "mailto:info@skillzuvatechnologies.com",
     iconBg: "#e8f0fe",
     iconColor: "#003A99",
   },

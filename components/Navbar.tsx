@@ -48,8 +48,9 @@ export default function Navbar() {
             <Image
               src="/logo-removebg-preview.png"
               alt="SkillZuva"
-              width={110}
-              height={36}
+              width={0}
+              height={0}
+              sizes="110px"
               style={{ width: "110px", height: "auto", objectFit: "contain" }}
               priority
             />
@@ -115,8 +116,9 @@ export default function Navbar() {
                   <Image
                     src="/logo-removebg-preview.png"
                     alt="SkillZuva"
-                    width={160}
-                    height={52}
+                    width={0}
+                    height={0}
+                    sizes="160px"
                     style={{ width: "160px", height: "auto", objectFit: "contain" }}
                   />
                 </Link>

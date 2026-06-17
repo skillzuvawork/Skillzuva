@@ -34,7 +34,7 @@ export const faqs: FAQ[] = [
   {
     id: "7",
     question: "Is there a refund policy?",
-    answer: "Yes. We offer a 7-day no-questions-asked refund if you are not satisfied. Contact our support team at info@skillvoratechnologies.in within 7 days of purchase to initiate a refund.",
+    answer: "Yes. We offer a 7-day no-questions-asked refund if you are not satisfied. Contact our support team at info@skillzuvatechnologies.com within 7 days of purchase to initiate a refund.",
   },
   {
     id: "8",

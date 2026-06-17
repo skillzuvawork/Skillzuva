@@ -13,7 +13,7 @@ import {
 import Autoplay from "embla-carousel-autoplay";
 import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 
-const LAUNCH_DATE = new Date("2026-06-15T19:18:00+05:30");
+const LAUNCH_DATE = new Date("2026-06-18T18:37:00+05:30");
 const STORAGE_KEY = "sz_launched";
 
 // Year-order: jan2022 → april2023 → july2024 → jan2025 → timeline
@@ -232,7 +232,7 @@ export default function SplashScreen({ onDismiss }: { onDismiss: () => void }) {
 
           <p className="text-white/50 text-xs sm:text-sm">
             Launching on{" "}
-            <span className="text-white font-semibold">15 June 2026, 7:03 PM IST</span>
+            <span className="text-white font-semibold">18 June 2026, 6:37 PM IST</span>
           </p>
 
           {/* Scroll cue */}

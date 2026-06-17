@@ -36,7 +36,7 @@ export default function TermsPage() {
 
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">4. Refund Policy</h2>
-          <p>We offer a 7-day money-back guarantee on all courses. If you are not satisfied with a course, you may request a full refund within 7 days of purchase by contacting us at <a href="mailto:info@skillvoratechnologies.in" className="text-[#003A99] underline">info@skillvoratechnologies.in</a>. Refunds will not be issued after 7 days or if more than 30% of the course content has been accessed.</p>
+          <p>We offer a 7-day money-back guarantee on all courses. If you are not satisfied with a course, you may request a full refund within 7 days of purchase by contacting us at <a href="mailto:info@skillzuvatechnologies.com" className="text-[#003A99] underline">info@skillzuvatechnologies.com</a>. Refunds will not be issued after 7 days or if more than 30% of the course content has been accessed.</p>
         </section>
 
         <section>
@@ -67,7 +67,7 @@ export default function TermsPage() {
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">10. Contact</h2>
           <p>For any questions regarding these Terms, contact us at:<br />
-            <a href="mailto:info@skillvoratechnologies.in" className="text-[#003A99] underline">info@skillvoratechnologies.in</a><br />
+            <a href="mailto:info@skillzuvatechnologies.com" className="text-[#003A99] underline">info@skillzuvatechnologies.com</a><br />
             SkillZuva Technologies, Hyderabad, Telangana, India
           </p>
         </section>

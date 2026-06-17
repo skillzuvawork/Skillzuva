@@ -59,8 +59,9 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
           <Image
             src="/logo-removebg-preview.png"
             alt="SkillZuva"
-            width={90}
-            height={30}
+            width={0}
+            height={0}
+            sizes="90px"
             style={{ width: "90px", height: "auto", objectFit: "contain" }}
             priority
           />
