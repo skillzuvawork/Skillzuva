@@ -3,7 +3,8 @@ import { createClient } from "@/lib/supabase/client";
 import type { Order } from "@/types/database";
 
 export async function createOrder(userId: string, courseId: string, amount: number): Promise<Order> {
-  const supabase = createClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createClient() as any;
   const order_number = `SZ-${Date.now()}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
   const { data, error } = await supabase
     .from("orders")
@@ -11,11 +12,12 @@ export async function createOrder(userId: string, courseId: string, amount: numb
     .select()
     .single();
   if (error) throw error;
-  return data;
+  return data as Order;
 }
 
 export async function createPayment(orderId: string, amount: number) {
-  const supabase = createClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createClient() as any;
   const { data, error } = await supabase
     .from("payments")
     .insert({ order_id: orderId, provider: "mock", status: "paid", amount })
@@ -26,7 +28,8 @@ export async function createPayment(orderId: string, amount: number) {
 }
 
 export async function createEnrollment(userId: string, courseId: string, orderId: string) {
-  const supabase = createClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createClient() as any;
   const { error } = await supabase.from("enrollments").insert({
     user_id: userId,
     course_id: courseId,

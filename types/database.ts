@@ -1,8 +1,42 @@
 export type Json = string | number | boolean | null | { [key: string]: Json } | Json[];
 
+export interface OfferLetter {
+  id: string;
+  employee_id: string;
+  name: string;
+  title: string;
+  stipend: number;
+  date: string;
+  pdf_url: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Database {
   public: {
     Tables: {
+      offer_letters: {
+        Row: OfferLetter;
+        Insert: {
+          id?: string;
+          employee_id?: string;
+          name: string;
+          title: string;
+          stipend: number;
+          date?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          name?: string;
+          title?: string;
+          stipend?: number;
+          date?: string;
+          pdf_url?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       profiles: {
         Row: {
           id: string;

@@ -1,6 +1,7 @@
 import { createClient as createServerSupabase } from "@/lib/supabase/server";
+import type { CourseWithInstructor } from "@/types/database";
 
-export async function getPublishedCoursesServer() {
+export async function getPublishedCoursesServer(): Promise<CourseWithInstructor[]> {
   const supabase = await createServerSupabase();
   const { data, error } = await supabase
     .from("courses")
@@ -8,10 +9,10 @@ export async function getPublishedCoursesServer() {
     .eq("is_published", true)
     .order("created_at", { ascending: false });
   if (error) throw error;
-  return data ?? [];
+  return (data ?? []) as CourseWithInstructor[];
 }
 
-export async function getCourseBySlugServer(slug: string) {
+export async function getCourseBySlugServer(slug: string): Promise<CourseWithInstructor | null> {
   const supabase = await createServerSupabase();
   const { data, error } = await supabase
     .from("courses")
@@ -20,7 +21,7 @@ export async function getCourseBySlugServer(slug: string) {
     .eq("is_published", true)
     .single();
   if (error) return null;
-  return data;
+  return data as CourseWithInstructor;
 }
 
 export async function getCourseVideosServer(courseId: string) {
@@ -34,14 +35,14 @@ export async function getCourseVideosServer(courseId: string) {
   return data ?? [];
 }
 
-export async function getAllCoursesServer() {
+export async function getAllCoursesServer(): Promise<CourseWithInstructor[]> {
   const supabase = await createServerSupabase();
   const { data, error } = await supabase
     .from("courses")
     .select("*, instructors(*)")
     .order("created_at", { ascending: false });
   if (error) throw error;
-  return data ?? [];
+  return (data ?? []) as CourseWithInstructor[];
 }
 
 export async function getInstructorsServer() {

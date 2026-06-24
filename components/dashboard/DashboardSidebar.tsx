@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, BookOpen, TrendingUp, User,
   CreditCard, Users, BarChart2, LogOut, GraduationCap,
-  LucideIcon
+  FileText, LucideIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { signOut } from "@/services/auth";
@@ -29,6 +29,7 @@ const adminNav: NavItem[] = [
   { label: "Dashboard", href: "/dashboard/admin", icon: LayoutDashboard },
   { label: "Users", href: "/dashboard/admin/users", icon: Users },
   { label: "Courses", href: "/dashboard/admin/courses", icon: BookOpen },
+  { label: "Offer Letters", href: "/dashboard/admin/offer-letters", icon: FileText },
   { label: "Payments", href: "/dashboard/admin/payments", icon: CreditCard },
   { label: "Reports", href: "/dashboard/admin/reports", icon: BarChart2 },
 ];

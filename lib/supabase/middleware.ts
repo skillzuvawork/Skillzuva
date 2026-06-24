@@ -46,7 +46,22 @@ export async function updateSession(request: NextRequest) {
   );
 
   // IMPORTANT: use getUser() not getSession() — validates token server-side
-  const { data: { user } } = await supabase.auth.getUser();
+  // Wrap in try/catch: expired refresh tokens throw AuthApiError, treat as unauthenticated
+  let user = null;
+  try {
+    const { data } = await supabase.auth.getUser();
+    user = data.user;
+  } catch {
+    // Stale/invalid refresh token — clear it so the browser stops retrying
+    response.cookies.delete("sb-access-token");
+    response.cookies.delete("sb-refresh-token");
+    // Also clear any project-specific Supabase auth cookies (sb-<ref>-auth-token)
+    request.cookies.getAll().forEach(({ name }) => {
+      if (name.startsWith("sb-") && name.endsWith("-auth-token")) {
+        response.cookies.delete(name);
+      }
+    });
+  }
 
   // Not authenticated — redirect to login and clear role cache
   if (!user) {
@@ -70,9 +85,10 @@ export async function updateSession(request: NextRequest) {
       .select("role")
       .eq("id", user.id)
       .single();
+    const profileData = profile as { role?: string } | null;
     // Only cache if we got a definitive role — don't cache null/error fallbacks
-    if (profile?.role) {
-      role = profile.role;
+    if (profileData?.role) {
+      role = profileData.role;
       response.cookies.set(ROLE_COOKIE, role, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",

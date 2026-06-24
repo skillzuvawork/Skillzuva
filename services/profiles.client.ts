@@ -3,7 +3,8 @@ import { createBrowserClient } from "@supabase/ssr";
 import { Database, StudentProfileUpdate } from "@/types/database";
 
 export async function updateProfile(updates: { full_name?: string; phone_number?: string; avatar_url?: string }) {
-  const supabase = createClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createClient() as any;
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Not authenticated");
 
@@ -15,7 +16,8 @@ export async function updateProfile(updates: { full_name?: string; phone_number?
 }
 
 export async function upsertStudentProfile(updates: StudentProfileUpdate) {
-  const supabase = createClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createClient() as any;
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Not authenticated");
 
@@ -35,10 +37,11 @@ export async function upsertStudentProfileWithToken(
   userId: string,
   updates: StudentProfileUpdate & { phone_number?: string | null }
 ) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = createBrowserClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  ) as any;
   await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
 
   const { phone_number, ...studentUpdates } = updates;
