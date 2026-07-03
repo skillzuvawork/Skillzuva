@@ -19,6 +19,7 @@ export async function createOfferLetterServer(input: {
   title: string;
   stipend: number;
   date: string;
+  joining_date: string | null;
 }): Promise<OfferLetter> {
   const supabase: AnySupabase = await createServerSupabase();
   const { data, error } = await supabase

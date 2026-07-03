@@ -101,13 +101,14 @@ const POLICIES = [
   "By accepting this offer, you agree to perform all responsibilities assigned to you with due care and diligence and in compliance with the company's policies and management norms.",
   "You are also required to devote a substantial amount of your time and effort to performing these tasks during business hours and such reasonable additional time as may be necessary.",
   "During the training period, you will not receive any of the employee benefits that regular employees receive.",
-  "During the training period, the company reserves the right to terminate your services without providing any reason. You are required to give 15 days' notice should you wish to terminate your training before the end of your tenure.",
+  "Employees are expected to maintain professional conduct, regular attendance, and participate in all mandatory meetings and assigned work activities. Repeated unauthorized absences, non-participation, misconduct, or violation of Company policies may result in disciplinary action, including termination of employment. You are required to give 15 days' notice should you wish to terminate your training before the end of your tenure.",
   "All information acquired during the course of your training shall be treated as strictly confidential. You shall refrain from using it for your own purposes or disclosing it to anyone outside the company.",
   "Upon conclusion of your tenure, you shall immediately return to the company all its property, equipment, and documents, including any electronically stored information.",
-  "You will observe and comply with all policies and practices governing the conduct of the company's business and its employees.",
-  "Upon successful completion of the training tenure, the candidate may be considered for a performance-based pre-placement offer from the company. The candidate is required to achieve an assigned target of 25 closures within 45 days.",
+  "You will observe and comply with all policies and practices governing the conduct of the company's business and its employees. Internship Certificate will be issued only upon successful completion of the 3-month internship",
+  "The compensation stated in this offer is payable based on the achievement of assigned sales targets, satisfactory performance, and compliance with the Company's attendance and performance policies.. The candidate is required to achieve an assigned target of 25 closures within 45 days.",
   "If he/she skips or is absent from daily meetings without informing the HR team, SkillVora reserves the right to terminate the training.",
   "If Skillzuva terminates the trainee, the final settlement of the stipend will be processed only after the completion of the 45-day training period. No stipend payment will be made during the training period.",
+  "Upon successful completion of the training tenure, the candidate may be considered for a performance-based pre-placement offer from the company.",
 ];
 
 const s = StyleSheet.create({
@@ -324,6 +325,9 @@ function buildPDF(
         `Your stipend will be Rs. ${letter.stipend.toLocaleString("en-IN")}/- (${stipendWords} Rupees)`
       ),
       createElement(Text, { style: s.para },
+        `Joining Date: ${letter.joining_date ? formatDate(letter.joining_date) : "To be communicated"}`
+      ),
+      createElement(Text, { style: s.para },
         "Working Hours: 10:30AM to 7:30PM, 9 Hours a day (Inc. Lunch Break)."
       ),
       createElement(Text, { style: s.para },
@@ -382,6 +386,15 @@ export async function GET(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const sb = supabase as any;
 
+  // Verify authenticated admin — double-check even though RLS enforces it
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const { data: profile } = await sb.from("profiles").select("role").eq("id", user.id).single();
+  if (!profile || profile.role !== "admin") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const { data, error } = await sb.from("offer_letters").select("*").eq("id", id).single();
   if (error || !data) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -389,10 +402,13 @@ export async function GET(
 
   const letter = data as OfferLetter;
 
-  // Non-preview download: redirect to stored bucket URL if available (fast)
+  // Non-preview download: redirect to stored bucket URL if available (fast path)
+  // Preview ALWAYS re-renders so edits are reflected immediately.
   if (!isPreview && letter.pdf_url) {
     return NextResponse.redirect(letter.pdf_url);
   }
+
+  // From here we must render — either it's a preview or no cached URL exists.
 
   const pub = path.join(process.cwd(), "public");
 
@@ -409,7 +425,7 @@ export async function GET(
   const buffer = await renderToBuffer(buildPDF(letter, headerB64, footerB64, logoB64, signB64, stampB64) as any);
   const uint8  = new Uint8Array(buffer);
 
-  // Upload to storage and save URL (always, even on preview — so next download is instant)
+  // Upload to storage and save URL
   const storagePath = `offer-letters/${letter.employee_id}_${letter.name.replace(/\s+/g, "_")}.pdf`;
   const { error: uploadErr } = await sb.storage
     .from(BUCKET)

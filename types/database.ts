@@ -7,6 +7,7 @@ export interface OfferLetter {
   title: string;
   stipend: number;
   date: string;
+  joining_date: string | null;
   pdf_url: string | null;
   created_at: string;
   updated_at: string;
