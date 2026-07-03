@@ -21,7 +21,7 @@ import type { OfferLetter } from "@/types/database";
 import { createElement } from "react";
 
 const BUCKET     = "skillzuva";
-const SUPABASE_URL = "https://mxwmckqiamakaqidfmhc.supabase.co";
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const BLUE  = "#003A99";
 const ORANGE = "#FF6B1A";
 const BLACK = "#111111";
@@ -105,7 +105,7 @@ const POLICIES = [
   "All information acquired during the course of your training shall be treated as strictly confidential. You shall refrain from using it for your own purposes or disclosing it to anyone outside the company.",
   "Upon conclusion of your tenure, you shall immediately return to the company all its property, equipment, and documents, including any electronically stored information.",
   "You will observe and comply with all policies and practices governing the conduct of the company's business and its employees. Internship Certificate will be issued only upon successful completion of the 3-month internship",
-  "The compensation stated in this offer is payable based on the achievement of assigned sales targets, satisfactory performance, and compliance with the Company's attendance and performance policies.. The candidate is required to achieve an assigned target of 25 closures within 45 days.",
+  "The compensation stated in this offer is payable based on the achievement of assigned sales targets, satisfactory performance, and compliance with the Company's attendance and performance policies. The candidate is required to achieve an assigned target of 25 closures within 45 days.",
   "If he/she skips or is absent from daily meetings without informing the HR team, SkillVora reserves the right to terminate the training.",
   "If Skillzuva terminates the trainee, the final settlement of the stipend will be processed only after the completion of the 45-day training period. No stipend payment will be made during the training period.",
   "Upon successful completion of the training tenure, the candidate may be considered for a performance-based pre-placement offer from the company.",
@@ -325,7 +325,7 @@ function buildPDF(
         `Your stipend will be Rs. ${letter.stipend.toLocaleString("en-IN")}/- (${stipendWords} Rupees)`
       ),
       createElement(Text, { style: s.para },
-        `Joining Date: ${letter.joining_date ? formatDate(letter.joining_date) : "To be communicated"}`
+        `Date of Joining: ${letter.joining_date ? formatDate(letter.joining_date) : "To be communicated"}`
       ),
       createElement(Text, { style: s.para },
         "Working Hours: 10:30AM to 7:30PM, 9 Hours a day (Inc. Lunch Break)."
