@@ -12,9 +12,22 @@ import {
   Path,
   Rect,
   Polyline,
+  Font,
 } from "@react-pdf/renderer";
 import path from "path";
 import fs from "fs";
+
+// Helvetica (built-in PDF font) has no ₹ (U+20B9) glyph — register Noto Sans, which does.
+Font.register({
+  family: "NotoSans",
+  src: path.join(process.cwd(), "public", "fonts", "NotoSans-Regular.ttf"),
+});
+Font.register({
+  family: "NotoSans-Bold",
+  src: path.join(process.cwd(), "public", "fonts", "NotoSans-Bold.ttf"),
+});
+// Keep whole words when wrapping (no "process-es" style hyphen splits)
+Font.registerHyphenationCallback((word) => [word]);
 import sharp from "sharp";
 import { createClient } from "@/lib/supabase/server";
 import type { OfferLetter } from "@/types/database";
@@ -97,23 +110,10 @@ function amountInWords(n: number): string {
   return amountInWords(Math.floor(n / 100000)) + " Lakh" + (n % 100000 ? " " + amountInWords(n % 100000) : "");
 }
 
-const POLICIES = [
-  "By accepting this offer, you agree to perform all responsibilities assigned to you with due care and diligence and in compliance with the company's policies and management norms.",
-  "You are also required to devote a substantial amount of your time and effort to performing these tasks during business hours and such reasonable additional time as may be necessary.",
-  "During the training period, you will not receive any of the employee benefits that regular employees receive.",
-  "Employees are expected to maintain professional conduct, regular attendance, and participate in all mandatory meetings and assigned work activities. Repeated unauthorized absences, non-participation, misconduct, or violation of Company policies may result in disciplinary action, including termination of employment. You are required to give 15 days' notice should you wish to terminate your training before the end of your tenure.",
-  "All information acquired during the course of your training shall be treated as strictly confidential. You shall refrain from using it for your own purposes or disclosing it to anyone outside the company.",
-  "Upon conclusion of your tenure, you shall immediately return to the company all its property, equipment, and documents, including any electronically stored information.",
-  "You will observe and comply with all policies and practices governing the conduct of the company's business and its employees. Internship Certificate will be issued only upon successful completion of the 3-month internship",
-  "The compensation stated in this offer is payable based on the achievement of assigned sales targets, satisfactory performance, and compliance with the Company's attendance and performance policies. The candidate is required to achieve an assigned target of 25 closures within 45 days.",
-  "If he/she skips or is absent from daily meetings without informing the HR team, SkillVora reserves the right to terminate the training.",
-  "If Skillzuva terminates the trainee, the final settlement of the stipend will be processed only after the completion of the 45-day training period. No stipend payment will be made during the training period.",
-  "Upon successful completion of the training tenure, the candidate may be considered for a performance-based pre-placement offer from the company.",
-];
 
 const s = StyleSheet.create({
   page: {
-    fontFamily: "Helvetica",
+    fontFamily: "NotoSans",
     fontSize: 10,
     color: BLACK,
     paddingTop: 0,
@@ -129,13 +129,14 @@ const s = StyleSheet.create({
   companyName: {
     textAlign: "center",
     fontSize: 22,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans-Bold",
     color: BLUE,
     letterSpacing: 2,
+    lineHeight: 1.15,
     marginBottom: 3,
   },
-  cinRow:  { textAlign: "center", fontSize: 9, fontFamily: "Helvetica-Bold", color: BLUE, marginBottom: 2 },
-  address: { textAlign: "center", fontSize: 9, fontFamily: "Helvetica-Bold", color: BLUE, marginBottom: 6 },
+  cinRow:  { textAlign: "center", fontSize: 9, fontFamily: "NotoSans-Bold", color: BLUE, lineHeight: 1.15, marginBottom: 2 },
+  address: { textAlign: "center", fontSize: 9, fontFamily: "NotoSans-Bold", color: BLUE, lineHeight: 1.15, marginBottom: 6 },
   divider: { borderBottomWidth: 2, borderBottomColor: BLUE },
 
   // ── Company info block page 2 (minimal — just divider) ───
@@ -152,23 +153,24 @@ const s = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 2,
   },
-  empId: { fontSize: 10.5, fontFamily: "Helvetica-Bold", color: ORANGE },
+  empId: { fontSize: 10.5, fontFamily: "NotoSans-Bold", color: ORANGE, lineHeight: 1.15 },
 
   logoRow:     { alignItems: "center", marginBottom: 4, marginTop: 2 },
   visibleLogo: { width: 190, height: 130, objectFit: "contain" },
 
   greeting: {
     textAlign: "center",
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans-Bold",
     fontSize: 12,
     color: BLACK,
+    lineHeight: 1.15,
     marginBottom: 10,
   },
 
   dateRow: { flexDirection: "row", justifyContent: "flex-end", marginBottom: 12 },
-  dateText: { fontSize: 11, color: BLACK },
+  dateText: { fontSize: 11, color: BLACK, lineHeight: 1.15 },
 
-  dear:  { fontFamily: "Helvetica-Bold", fontSize: 11, color: BLACK, marginBottom: 10 },
+  dear:  { fontFamily: "NotoSans-Bold", fontSize: 11, color: BLACK, lineHeight: 1.15, marginBottom: 10 },
   para:  { fontSize: 11, color: BLACK, lineHeight: 1.7, marginBottom: 11 },
 
   // ── Footer (fixed, full-width) ────────────────────────────
@@ -184,7 +186,7 @@ const s = StyleSheet.create({
     borderTopColor: "#e0e0e0",
   },
   footerContactItem: { flexDirection: "row", alignItems: "center", gap: 5 },
-  footerContactText: { fontSize: 8.5, color: BLUE, fontFamily: "Helvetica-Bold" },
+  footerContactText: { fontSize: 8.5, color: BLUE, fontFamily: "NotoSans-Bold" },
   footerImg:      { width: 595, height: FOOTER_H },
 
   // ── Watermark ─────────────────────────────────────────────
@@ -196,16 +198,18 @@ const s = StyleSheet.create({
   },
   watermarkImg: { width: 320, height: 220, objectFit: "contain", opacity: 0.06 },
 
-  // ── Page 2 ────────────────────────────────────────────────
-  policyTitle: {
-    textAlign: "center",
-    fontFamily: "Helvetica-Bold",
-    fontSize: 14,
+  // ── Section headings & bullets (page 1) ──────────────────
+  sectionTitle: {
+    fontSize: 11,
+    fontFamily: "NotoSans-Bold",
     color: BLUE,
-    marginBottom: 12,
-    marginTop: 4,
+    lineHeight: 1.15,
+    marginTop: 10,
+    marginBottom: 5,
   },
-  policyItem: { fontSize: 9.5, color: BLACK, lineHeight: 1.6, marginBottom: 7 },
+  bulletRow: { flexDirection: "row", marginBottom: 5, paddingLeft: 4 },
+  bullet:    { fontSize: 11, color: BLACK, lineHeight: 1.15, width: 12, marginTop: 0 },
+  bulletText:{ fontSize: 10.5, color: BLACK, lineHeight: 1.6, flex: 1 },
 
   // ── Signature ─────────────────────────────────────────────
   sigRow:        { flexDirection: "row", alignItems: "flex-end", marginTop: 18, gap: 80 },
@@ -213,11 +217,11 @@ const s = StyleSheet.create({
   sigAndStamp:   { position: "relative", width: 120, height: 90, marginBottom: 3 },
   stampImg:      { position: "absolute", top: 0, left: 10, width: 88, height: 88, objectFit: "contain" },
   sigImg:        { position: "absolute", bottom: 0, left: 0, width: 110, height: 52, objectFit: "contain" },
-  sigName:       { fontSize: 9.5, fontFamily: "Helvetica-Bold", color: BLACK },
+  sigName:       { fontSize: 9.5, fontFamily: "NotoSans-Bold", color: BLACK },
   sigRole:       { fontSize: 9,   color: GRAY },
   sigRight:      { flexDirection: "column", gap: 10 },
   sigFieldRow:   { flexDirection: "column" },
-  sigLabel:      { fontSize: 9.5, color: BLACK, fontFamily: "Helvetica-Bold", marginBottom: 3 },
+  sigLabel:      { fontSize: 9.5, color: BLACK, fontFamily: "NotoSans-Bold", marginBottom: 3 },
   sigLine:       { borderBottomWidth: 1, borderBottomColor: BLACK, width: 180 },
 });
 
@@ -305,38 +309,60 @@ function buildPDF(
         createElement(PDFImage, { src: logoB64, style: s.visibleLogo }),
       ),
       createElement(Text, { style: s.greeting }, "Greetings from SKILLZUVA TECHNOLOGIES"),
-      // Date
+
+      // Date right-aligned
       createElement(View, { style: s.dateRow },
-        createElement(Text, { style: s.dateText }, `DATE :- ${formatDate(letter.date)}`),
+        createElement(Text, { style: s.dateText }, `Date: ${formatDate(letter.date)}`),
       ),
-      createElement(Text, { style: s.dear }, `Dear  ${letter.name.toUpperCase()}`),
+
+      // To block
+      createElement(Text, { style: { fontSize: 11, color: BLACK, lineHeight: 1.15, marginBottom: 2 } }, "To,"),
+      createElement(Text, { style: { fontSize: 11, fontFamily: "NotoSans-Bold", color: BLACK, lineHeight: 1.15, marginBottom: 10 } }, letter.name),
+
+      // Subject
+      createElement(View, { style: { flexDirection: "row", marginBottom: 10 } },
+        createElement(Text, { style: { fontSize: 11, fontFamily: "NotoSans-Bold", color: BLACK, lineHeight: 1.15 } }, "Subject: "),
+        createElement(Text, { style: { fontSize: 11, color: BLACK, lineHeight: 1.15 } }, `Offer for ${letter.title} (Sales Intern)`),
+      ),
+
+      createElement(Text, { style: s.dear }, `Dear ${letter.name},`),
+      createElement(Text, { style: { fontSize: 12, fontFamily: "NotoSans-Bold", color: BLACK, lineHeight: 1.15, marginBottom: 8 } }, "Congratulations!"),
       createElement(Text, { style: s.para },
-        "We congratulate you for being selected for a 3 Months INTERNSHIP PROGRAM at SKILLZUVA TECHNOLOGIES LLP. Ltd."
+        `We are pleased to offer you the position of ${letter.title} (Sales Intern) at SKILLZUVA TECHNOLOGIES. We are excited to welcome you to our team and look forward to your contribution and growth during the internship period.`
       ),
-      // Title line
-      createElement(View, { style: { flexDirection: "row", marginBottom: 11 } },
-        createElement(Text, { style: { fontSize: 11, color: BLACK } }, "Title: "),
-        createElement(Text, { style: { fontSize: 11, fontFamily: "Helvetica-Bold", color: BLACK } }, letter.title),
+
+      // Internship Details section
+      createElement(Text, { style: s.sectionTitle }, "Internship Details"),
+      createElement(View, { style: s.bulletRow, wrap: false },
+        createElement(Text, { style: s.bullet }, "•"),
+        createElement(Text, { style: s.bulletText }, `Position: ${letter.title} (Sales Intern)`),
       ),
-      createElement(Text, { style: s.para },
-        "full-time opportunity will be offered based on your performance during the internship period.\nThe compensation for the full-time role will be discussed at the time of conversion."
+      createElement(View, { style: s.bulletRow, wrap: false },
+        createElement(Text, { style: s.bullet }, "•"),
+        createElement(Text, { style: s.bulletText }, "Internship Duration: 3 Months"),
       ),
-      createElement(Text, { style: s.para },
-        `Your stipend will be Rs. ${letter.stipend.toLocaleString("en-IN")}/- (${stipendWords} Rupees)`
+      createElement(View, { style: s.bulletRow, wrap: false },
+        createElement(Text, { style: s.bullet }, "•"),
+        createElement(Text, { style: s.bulletText },
+          `Joining Date: ${letter.joining_date ? formatDate(letter.joining_date) : "To be communicated"}`
+        ),
       ),
-      createElement(Text, { style: s.para },
-        `Date of Joining: ${letter.joining_date ? formatDate(letter.joining_date) : "To be communicated"}`
+      createElement(View, { style: s.bulletRow, wrap: false },
+        createElement(Text, { style: s.bullet }, "•"),
+        createElement(Text, { style: s.bulletText }, "Work Mode: Remote / Work from Office"),
       ),
-      createElement(Text, { style: s.para },
-        "Working Hours: 10:30AM to 7:30PM, 9 Hours a day (Inc. Lunch Break)."
+
+      // Training Period
+      createElement(Text, { style: s.sectionTitle }, "Training Period"),
+      createElement(View, { style: s.bulletRow, wrap: false },
+        createElement(Text, { style: s.bullet }, "•"),
+        createElement(Text, { style: s.bulletText }, "The first 15 days of the internship will be considered as a training period."),
       ),
-      createElement(Text, { style: s.para },
-        "Job Type: Full-Time- Training Kindly note that Monday will be a day off.\nLocation: Remote"
+      createElement(View, { style: s.bulletRow, wrap: false },
+        createElement(Text, { style: s.bullet }, "•"),
+        createElement(Text, { style: s.bulletText }, "The training period will be unpaid and will focus on helping you understand the company's processes, products, and work expectations."),
       ),
-      createElement(Text, { style: s.para },
-        "We look forward to your valuable contributions and to a mutually rewarding association with Skillzuva Technologies."
-      ),
-      createElement(Text, { style: s.para }, "To accept this offer, please confirm by email"),
+
     ),
     pageFooter,
   );
@@ -346,25 +372,80 @@ function buildPDF(
     page2Header,
     watermark,
     createElement(View, { style: s.body },
-      createElement(Text, { style: s.policyTitle }, "Training Policy"),
-      ...POLICIES.map((text, i) =>
-        createElement(Text, { key: String(i), style: s.policyItem }, `${i + 1}) ${text}`)
+
+      // Compensation
+      createElement(Text, { style: s.sectionTitle }, "Compensation"),
+      createElement(Text, { style: s.para },
+        `The total earning opportunity during the internship is up to ₹${letter.stipend.toLocaleString("en-IN")} per month, structured as follows:`
       ),
-      createElement(View, { style: s.sigRow },
-        createElement(View, { style: s.sigLeft },
-          createElement(View, { style: s.sigAndStamp },
-            createElement(PDFImage, { src: stampB64, style: s.stampImg }),
-            createElement(PDFImage, { src: signB64,  style: s.sigImg }),
-          ),
-          createElement(Text, { style: s.sigName }, "CH. Vaishnavi – HR Manager"),
-          createElement(Text, { style: s.sigRole }, "Skillzuva Technologies"),
+      createElement(View, { style: s.bulletRow, wrap: false },
+        createElement(Text, { style: s.bullet }, "•"),
+        createElement(Text, { style: s.bulletText }, "Fixed Stipend: ₹5,000 per month will be provided upon generating a minimum of ₹10,000 in revenue through successful course enrollments."),
+      ),
+      createElement(View, { style: s.bulletRow, wrap: false },
+        createElement(Text, { style: s.bullet }, "•"),
+        createElement(Text, { style: s.bulletText }, "Variable Incentives: Additional incentives of up to ₹10,000 per month can be earned based on individual performance, successful course enrollments, and achievement of assigned targets."),
+      ),
+
+      // Performance Expectations
+      createElement(Text, { style: s.sectionTitle }, "Performance Expectations"),
+      createElement(View, { style: s.bulletRow, wrap: false },
+        createElement(Text, { style: s.bullet }, "•"),
+        createElement(Text, { style: s.bulletText }, "The expected monthly target is 25 successful course enrollments (closures)."),
+      ),
+      createElement(View, { style: s.bulletRow, wrap: false },
+        createElement(Text, { style: s.bullet }, "•"),
+        createElement(Text, { style: s.bulletText }, "Performance will be reviewed based on productivity, conversions, and overall contribution."),
+      ),
+
+      // Leave & Notice Period
+      createElement(Text, { style: s.sectionTitle }, "Leave & Notice Period"),
+      createElement(View, { style: s.bulletRow, wrap: false },
+        createElement(Text, { style: s.bullet }, "•"),
+        createElement(Text, { style: s.bulletText }, "No paid leaves will be provided during the internship period."),
+      ),
+      createElement(View, { style: s.bulletRow, wrap: false },
+        createElement(Text, { style: s.bullet }, "•"),
+        createElement(Text, { style: s.bulletText }, "Any leave requirement must be communicated and approved by the reporting manager."),
+      ),
+      createElement(View, { style: s.bulletRow, wrap: false },
+        createElement(Text, { style: s.bullet }, "•"),
+        createElement(Text, { style: s.bulletText }, "A 15-day notice period is applicable in case of discontinuation of the internship by the intern. Failure to serve the required notice period may impact the final settlement."),
+      ),
+
+      // Acceptance of Offer
+      createElement(Text, { style: s.sectionTitle }, "Acceptance of Offer"),
+      createElement(Text, { style: s.para },
+        "If you accept this offer, kindly confirm your acceptance and complete the required joining formalities."
+      ),
+      createElement(Text, { style: s.para },
+        "We look forward to having you as a part of SKILLZUVA TECHNOLOGIES and wish you a successful internship journey."
+      ),
+
+      // Sign-off: "Best Regards," then stamp+sign floating behind HR Team / SKILLZUVA TECHNOLOGIES
+      createElement(Text, { style: { fontSize: 11, color: BLACK, lineHeight: 1.15, marginBottom: 2, marginTop: 4 } }, "Best Regards,"),
+      createElement(View, { style: { position: "relative", height: 62, marginBottom: 0 } },
+        createElement(PDFImage, { src: stampB64, style: { position: "absolute", top: 0, left: 2, width: 60, height: 60, objectFit: "contain", opacity: 0.92 } }),
+        createElement(PDFImage, { src: signB64,  style: { position: "absolute", bottom: 0, left: 0, width: 80, height: 36, objectFit: "contain" } }),
+        createElement(Text, { style: { position: "absolute", bottom: 14, left: 0, fontSize: 11, fontFamily: "NotoSans-Bold", color: BLACK, lineHeight: 1.15 } }, "HR Team"),
+        createElement(Text, { style: { position: "absolute", bottom: 0, left: 0, fontSize: 11, color: BLACK, lineHeight: 1.15 } }, "SKILLZUVA TECHNOLOGIES"),
+      ),
+
+      // Candidate acceptance block
+      createElement(View, { style: { borderTopWidth: 1, borderTopColor: "#cccccc", paddingTop: 10, marginTop: 14 } },
+        createElement(Text, { style: { fontSize: 11, fontFamily: "NotoSans-Bold", color: BLACK, lineHeight: 1.15, marginBottom: 6 } }, "Candidate Acceptance"),
+        createElement(Text, { style: { fontSize: 11, color: BLACK, lineHeight: 1.4, marginBottom: 14 } },
+          "I, ________________________, accept the offer for the position of " +
+          `${letter.title} (Sales Intern) and agree to the terms mentioned above.`
         ),
-        createElement(View, { style: s.sigRight },
-          ...["Employee Name", "Signature", "Date"].map((label) =>
-            createElement(View, { key: label, style: s.sigFieldRow },
-              createElement(Text, { style: s.sigLabel }, `${label}:`),
-              createElement(View, { style: s.sigLine }),
-            )
+        createElement(View, { style: { flexDirection: "row", gap: 40 } },
+          createElement(View, null,
+            createElement(Text, { style: { fontSize: 10, color: BLACK, lineHeight: 1.15, marginBottom: 4 } }, "Signature:"),
+            createElement(View, { style: { borderBottomWidth: 1, borderBottomColor: BLACK, width: 160 } }),
+          ),
+          createElement(View, null,
+            createElement(Text, { style: { fontSize: 10, color: BLACK, lineHeight: 1.15, marginBottom: 4 } }, "Date:"),
+            createElement(View, { style: { borderBottomWidth: 1, borderBottomColor: BLACK, width: 120 } }),
           ),
         ),
       ),

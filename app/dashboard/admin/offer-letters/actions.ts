@@ -4,13 +4,13 @@ import { revalidatePath } from "next/cache";
 import { createOfferLetterServer, deleteOfferLetterServer } from "@/services/offer-letters";
 
 export async function createOfferLetterAction(formData: FormData) {
-  const name         = (formData.get("name") as string).trim();
-  const title        = (formData.get("title") as string).trim();
-  const stipend      = parseFloat(formData.get("stipend") as string);
-  const date         = formData.get("date") as string;
-  const joining_date = (formData.get("joining_date") as string) || null;
+  const name         = String(formData.get("name") ?? "").trim();
+  const title        = String(formData.get("title") ?? "").trim();
+  const stipend      = parseFloat(String(formData.get("stipend") ?? ""));
+  const date         = String(formData.get("date") ?? "").trim();
+  const joining_date = String(formData.get("joining_date") ?? "").trim();
 
-  if (!name || !title || isNaN(stipend) || !date) {
+  if (!name || !title || isNaN(stipend) || stipend <= 0 || !date || !joining_date) {
     return { error: "All fields are required." };
   }
 
@@ -43,6 +43,14 @@ export async function bulkCreateOfferLettersAction(rows: {
   const results = [];
   for (const row of rows) {
     try {
+      if (
+        !row.name?.trim() || !row.title?.trim() ||
+        !Number.isFinite(row.stipend) || row.stipend <= 0 ||
+        !row.date?.trim() || !row.joining_date?.trim()
+      ) {
+        results.push({ success: false, error: "All fields are required." });
+        continue;
+      }
       await createOfferLetterServer({ ...row, joining_date: row.joining_date });
       results.push({ success: true });
     } catch (e) {
